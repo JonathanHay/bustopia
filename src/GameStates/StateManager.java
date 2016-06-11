@@ -30,6 +30,7 @@ public class StateManager {
         states.add(new LoadingState(this));
         states.get(currentState).init();       
         states.add(new MainMenuState(this));
+        states.add(new NewGameState(this));
     }
     
 

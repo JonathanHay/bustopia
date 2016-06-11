@@ -14,6 +14,7 @@ import java.awt.Graphics2D;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.event.MouseInputListener;
+import javax.swing.JFrame;
 
 /**
  *
@@ -21,9 +22,13 @@ import javax.swing.event.MouseInputListener;
  */
 public class GamePanel extends JPanel implements Runnable, KeyListener, MouseListener, MouseMotionListener {
 
-    public static final int WIDTH = 320;
-    public static final int HEIGHT = 240;
-    public static final int SCALE = 3;
+    public static int WIDTH = 640;
+    public static int HEIGHT = 360;
+    public static double SCALE = 2;
+    private static boolean fullscreen;
+    public boolean lastFullscreen;
+    public static int frames;
+    public static int ticks;
     private Thread t;
     private boolean running;
     private int FPS = 60;
@@ -31,23 +36,32 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
     private BufferedImage img;
     private Graphics2D g;
     private StateManager sm;
+    private static int extraX;
+    private static int extraY;
+    private static Dimension screenSize;
+    protected JFrame f;
 
-    public GamePanel() {
+    public GamePanel(JFrame f) {
         super();
-        setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+        this.f = f;
+        screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        SCALE = screenSize.width / WIDTH / 2;
+        setPreferredSize(new Dimension((int) (WIDTH * SCALE), (int) (HEIGHT * SCALE)));
         setFocusable(true);
         requestFocus();
-
+        fullscreen = false;
+        lastFullscreen = fullscreen;
+        f.setUndecorated(fullscreen);
+        extraX = 0;
+        extraY = 0;
     }
 
     public void addNotify() {
         super.addNotify();
         if (t == null) {
             t = new Thread(this);
-            addKeyListener(this);
-            addMouseListener(this);
-            addMouseMotionListener(this);          
             t.start();
+
         }
     }
 
@@ -56,6 +70,24 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         g = (Graphics2D) img.getGraphics();
         running = true;
         sm = new StateManager();
+        addKeyListener(this);
+        addMouseListener(this);
+        addMouseMotionListener(this);
+    }
+
+    public static void toggleFullscreen() {
+        if (fullscreen == true) {
+            SCALE = screenSize.width / WIDTH / 2;
+            extraX = 6;
+            extraY = 29;
+            fullscreen = false;
+        } else if (fullscreen == false) {
+            SCALE = screenSize.width / WIDTH;       
+            extraX = 0;
+            extraY = 0;
+            fullscreen = true;
+        }
+
     }
 
     public void run() {
@@ -64,8 +96,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         long start;
         long deltaTime;
         long waitTime;
-        int frames = 0;
-        int ticks = 0;
+        frames = 0;
+        ticks = 0;
         start = System.nanoTime();
         double unprocessed = 0;
         double nsPerSec = 1000000000.0 / 60;
@@ -88,8 +120,17 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
                 int tempUnprocessed = (int) unprocessed;
                 for (int i = 0; i < tempUnprocessed; i++) {
                     ticks++;
-                    update();
                     unprocessed--;
+                    update();
+                    if (fullscreen != lastFullscreen) {
+                        f.dispose();
+                        f.setUndecorated(fullscreen);
+                        f.pack();
+                        f.setSize(new Dimension((int) (WIDTH * SCALE) + extraX, (int) (HEIGHT * SCALE) + extraY));
+                        lastFullscreen = fullscreen;
+                        f.setLocationRelativeTo(null);
+                        f.setVisible(true);
+                    }
                     draw();
                 }
 
@@ -123,11 +164,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
     private void drawToScreen() {
         Graphics g2 = getGraphics();
-        g2.drawImage(img, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
+        g2.drawImage(img, 0, 0, (int) (WIDTH * SCALE), (int) (HEIGHT * SCALE), null);
         g2.dispose();
     }
 
     public void keyTyped(KeyEvent e) {
+
     }
 
     public void keyPressed(KeyEvent e) {
@@ -147,7 +189,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
     }
 
     public void mouseReleased(MouseEvent e) {
-       
+
     }
 
     public void mouseEntered(MouseEvent e) {
@@ -155,7 +197,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
     }
 
     public void mouseExited(MouseEvent e) {
-        
+
     }
 
     public void mouseDragged(MouseEvent e) {

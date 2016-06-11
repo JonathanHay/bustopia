@@ -18,15 +18,16 @@ public class Main {
 
     public Main() {
         JFrame f = new JFrame("BUSTOPIA");
-        f.setContentPane(new GamePanel());
+        f.setContentPane(new GamePanel(f));
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setResizable(false);
         try {
-            Image image = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("Resources/icon.png"));
+            Image image = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("Resources/icon2.png"));
             f.setIconImage(image);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         f.pack();
         f.setLocationRelativeTo(null);
         f.setVisible(true);

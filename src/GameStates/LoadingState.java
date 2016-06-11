@@ -33,8 +33,7 @@ public class LoadingState extends GameState {
 
         try {
             c = Color.WHITE;
-            tf = new Font("Century Gothic", Font.BOLD, 32);
-
+            tf = new Font("Century Gothic", Font.BOLD, 32);           
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -42,11 +41,10 @@ public class LoadingState extends GameState {
     }
 
     public void init() {
-
     }
 
     public void update() {
-
+        
     }
 
     public void draw(Graphics2D g) {
@@ -58,8 +56,7 @@ public class LoadingState extends GameState {
         g.setFont(tf);
         g.drawString("LOADING...", 85, 120);
         
-        g.setFont(f);
-       
+        g.setFont(f);      
     }
 
 
@@ -84,7 +81,7 @@ public class LoadingState extends GameState {
     }
 
     public void mouseMoved(MouseEvent e) {
-        
+
     }
 
 }
