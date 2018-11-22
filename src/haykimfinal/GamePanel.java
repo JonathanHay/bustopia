@@ -24,7 +24,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
     public static int WIDTH = 640;
     public static int HEIGHT = 360;
-    public static double SCALE = 2;
+    public static double SCALEX = 2;
+    public static double SCALEY = 2;
     private static boolean fullscreen;
     public boolean lastFullscreen;
     public static int frames;
@@ -45,8 +46,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         super();
         this.f = f;
         screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        SCALE = screenSize.width / WIDTH / 2;
-        setPreferredSize(new Dimension((int) (WIDTH * SCALE), (int) (HEIGHT * SCALE)));
+        SCALEX = 2;
+        SCALEY = 2;
+        setPreferredSize(new Dimension((int) (WIDTH * SCALEX), (int) (HEIGHT * SCALEY)));
         setFocusable(true);
         requestFocus();
         fullscreen = false;
@@ -69,7 +71,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
         g = (Graphics2D) img.getGraphics();
         running = true;
-        sm = new StateManager();
+        sm = new StateManager();   
         addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -77,12 +79,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
     public static void toggleFullscreen() {
         if (fullscreen == true) {
-            SCALE = screenSize.width / WIDTH / 2;
+            SCALEX = 2;
+            SCALEY = 2;
             extraX = 6;
             extraY = 29;
             fullscreen = false;
         } else if (fullscreen == false) {
-            SCALE = screenSize.width / WIDTH;       
+            SCALEX = screenSize.width / (double)WIDTH;
+            SCALEY = screenSize.height / (double)HEIGHT;
             extraX = 0;
             extraY = 0;
             fullscreen = true;
@@ -92,7 +96,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
     public void run() {
         init();
-
+               
         long start;
         long deltaTime;
         long waitTime;
@@ -126,7 +130,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
                         f.dispose();
                         f.setUndecorated(fullscreen);
                         f.pack();
-                        f.setSize(new Dimension((int) (WIDTH * SCALE) + extraX, (int) (HEIGHT * SCALE) + extraY));
+                        f.setSize(new Dimension((int) (WIDTH * SCALEX) + extraX, (int) (HEIGHT * SCALEY) + extraY));
                         lastFullscreen = fullscreen;
                         f.setLocationRelativeTo(null);
                         f.setVisible(true);
@@ -164,12 +168,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
     private void drawToScreen() {
         Graphics g2 = getGraphics();
-        g2.drawImage(img, 0, 0, (int) (WIDTH * SCALE), (int) (HEIGHT * SCALE), null);
+        g2.drawImage(img, 0, 0, (int) (WIDTH * SCALEX), (int) (HEIGHT * SCALEY), null);
         g2.dispose();
     }
 
     public void keyTyped(KeyEvent e) {
-
+        sm.keyTyped(e.getKeyCode());
     }
 
     public void keyPressed(KeyEvent e) {
@@ -189,7 +193,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
     }
 
     public void mouseReleased(MouseEvent e) {
-
+        sm.mouseReleased(e);
     }
 
     public void mouseEntered(MouseEvent e) {
@@ -201,7 +205,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
     }
 
     public void mouseDragged(MouseEvent e) {
-
+        sm.mouseDragged(e);
     }
 
     public void mouseMoved(MouseEvent e) {

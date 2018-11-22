@@ -37,16 +37,18 @@ public class LoadingState extends GameState {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        
     }
 
     public void init() {
+        
     }
 
     public void update() {
         
     }
 
+    //Draws the word 'LOADING...' before the game starts
     public void draw(Graphics2D g) {
         g.setColor(Color.BLACK);
         g.drawRect(0, 0, GamePanel.WIDTH, GamePanel.WIDTH);
@@ -82,6 +84,20 @@ public class LoadingState extends GameState {
 
     public void mouseMoved(MouseEvent e) {
 
+    }
+
+    public void mouseReleased(MouseEvent e) {
+        
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void keyTyped(int k) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

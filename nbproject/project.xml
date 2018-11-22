@@ -5,8 +5,8 @@
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <name>Bustopia</name>
             <source-roots>
-                <root id="src.Resources.dir"/>
                 <root id="src.dir"/>
+                <root id="src.Resources.dir"/>
                 <root id="src.lib.dir"/>
             </source-roots>
             <test-roots>

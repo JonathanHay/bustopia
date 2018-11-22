@@ -38,10 +38,10 @@ public class Background {
     private double dx0;
     private double dy0;
     private boolean moving;
-
-    private double parallaxMultiplier;
-
-    public Background(String s, double pm, boolean wx, boolean wy, double sx, double sy) {
+    private boolean visible;
+    
+    //Constructs static background. Sets image based the string (which is the resource ), and scales the image
+    public Background(String s, boolean wx, boolean wy, double sx, double sy) {
         hitbox = new Rectangle(0, 0, 0, 0);
         hasHitbox = false;
         try {
@@ -55,15 +55,59 @@ public class Background {
         }
         wrapX = wx;
         wrapY = wy;
-        parallaxMultiplier = pm;
         moving = false;
+        visible = true;
     }
 
+    //Constructs static background. Sets image based the BufferedImage (which is the resource loaded into an image), and scales the image
+    public Background(BufferedImage image, boolean wx, boolean wy, double sx, double sy) {
+        img = image;
+
+        try {
+            AffineTransform tx = new AffineTransform();
+            tx.scale(sx, sy);
+            AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+            img = op.filter(img, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        hitbox = new Rectangle(0, 0, 0, 0);
+        hasHitbox = false;
+        wrapX = wx;
+        wrapY = wy;
+        moving = false;
+        visible = true;
+    }
+
+    //sets X, Y coords (with wrap)
     public void setPosition(double x1, double y1) {
-        x = (x1 * parallaxMultiplier) % GamePanel.WIDTH;
-        y = (y1 * parallaxMultiplier) % GamePanel.HEIGHT;
+        x = x1 % GamePanel.WIDTH;
+        y = y1 % GamePanel.HEIGHT;
     }
 
+    //sets X, Y coords (without wrap)
+    public void forceSetPosition(double x1, double y1) {
+        x = x1;
+        y = y1;
+    }
+
+    //Sets the background visible/invisible
+    public void setVisible(boolean b) {
+        visible = b;
+    }
+
+    //returns x coord
+    public double getX() {
+        return x;
+    }
+
+    //returns y coord
+    public double getY() {
+        return y;
+    }
+
+    //Moves the object to a position relative to its current position, and sets the speed at which it does this and the directions it applies to
     public void moveToPosition(int x2, int y2, double speed, boolean mX, boolean mY) {
         if (!moving) {
             dx0 = dx;
@@ -75,9 +119,9 @@ public class Background {
             mY1 = mY;
             moving = true;
         }
-
     }
-
+    
+    //Called every time the background updates and moves the item based on params from moveToPosition
     private void move(int x2, int y2, double speed, boolean mX, boolean mY) {
         if (mX) {
             if (x > x2) {
@@ -111,36 +155,44 @@ public class Background {
         }
     }
 
+    //returns state of moving/not moving
     public boolean getMoving() {
         return moving;
     }
 
+    //sets velocity
     public void setVelocity(double dx, double dy) {
         this.dx = dx;
         this.dy = dy;
     }
 
+    //sets X coord
     public void setX(int i) {
         x = i;
     }
 
+    //generates a hitbox based on the size of the image that will be used to check mouse clicks
     public void generateHitbox() {
         hitbox = new Rectangle((int) x, (int) y, img.getWidth(), img.getHeight());
         hasHitbox = true;
     }
 
+    //Updates hitbox position
     private void updateHitbox() {
         hitbox.setLocation((int) x, (int) y);
     }
 
+    //returns the hitbox for use with mouse
     public Rectangle getHitbox() {
         return hitbox;
     }
 
+    //Sets Y coord
     public void setY(int i) {
         y = i;
     }
 
+    //updates position based on velocity and wraps, updates hitbox and moves if in a state of moving
     public void update() {
         if (img.getWidth() > GamePanel.WIDTH) {
             x = (x + dx) % img.getWidth();
@@ -162,24 +214,30 @@ public class Background {
         }
     }
 
+    //Draws (if visible), and wraps the image if necessary (set to wrap)
     public void draw(Graphics2D g) {
-        g.drawImage(img, (int) x, (int) y, null);
 
-        if (wrapX) {
-            if (x < 0) {
-                g.drawImage(img, (int) x + img.getWidth(), (int) y, null);
+        if (visible) {
+
+            g.drawImage(img, (int) x, (int) y, null);
+
+            if (wrapX) {
+                if (x < 0) {
+                    g.drawImage(img, (int) x + img.getWidth(), (int) y, null);
+                }
+                if (x > 0) {
+                    g.drawImage(img, (int) x - img.getWidth(), (int) y, null);
+                }
             }
-            if (x > 0) {
-                g.drawImage(img, (int) x - img.getWidth(), (int) y, null);
+            if (wrapY) {
+                if (y > 0) {
+                    g.drawImage(img, (int) x, (int) y - img.getHeight(), null);
+                }
+                if (y < 0) {
+                    g.drawImage(img, (int) x, (int) y + img.getHeight(), null);
+                }
             }
-        }
-        if (wrapY) {
-            if (y > 0) {
-                g.drawImage(img, (int) x, (int) y - img.getHeight(), null);
-            }
-            if (y < 0) {
-                g.drawImage(img, (int) x, (int) y + img.getHeight(), null);
-            }
+
         }
     }
 }
