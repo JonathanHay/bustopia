@@ -47,7 +47,7 @@ public class NightMenu extends GameState {
     private URL resource;
     private BasicPlayer music;
 
-    private String[] buttonNames = {"Inventory", "Buses", "Map", "Shop", "Arena (Coming Soon)", "Leaderboards(Coming Soon)"};
+    private String[] buttonNames = {"Inventory", "Buses", "Map", "Shop", "*Arena*", "*Scores*"};
     private String[] nightSceneNames = {"Resources/NightBackground/nightsky.png", "Resources/NightBackground/snowy.png"};
     private String citybus[] = {"Resources/NightBackground/SleepyBus/sleepybus.png", "Resources/NightBackground/SleepyBus/sleepybus1.png", "Resources/NightBackground/SleepyBus/sleepybus2.png", "Resources/NightBackground/SleepyBus/sleepybus3.png"};
 
@@ -102,7 +102,6 @@ public class NightMenu extends GameState {
 
         nightScene.setLayerPosition(0, 90, 225);
         nightScene.setLayerPosition(1, 90, 255);
-
         bus = new AnimatedBackground(citybus, 5, 1, false, false, AnimatedBackground.AnimType.BOB, 1, 1);
         bus.setPosition(250, 273);
         bus.setBobSpeed(5);
